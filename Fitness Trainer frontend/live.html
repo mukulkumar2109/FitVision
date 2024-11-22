@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Exercise Recording</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    
+    <h1>Live Exercise Recording</h1>
+
+    <div>
+        <label for="exerciseInput">Exercise:</label>
+        <input type="text" id="exerciseInput" placeholder="e.g., bicep curls">
+    </div>
+    <div>
+        <label for="bodyPartInput">Body Part:</label>
+        <input type="text" id="bodyPartInput" placeholder="e.g., left arm">
+    </div>
+
+    <button class="button" onclick="startRecording()">Start Recording</button>
+    <button class="button" onclick="stopRecording()">Stop Recording</button>
+
+    <video id="videoElement" autoplay playsinline></video>
+    <p id="responseMessage"></p>
+<script src="live.js"></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live video</title>
+</head>
+<body>
+    <h1>Here's the video</h1>
+    <video id="video-feed" src="" alt="Video Feed" width="640" height="480">
+
+    <script>
+        const videoElement = document.getElementById('video-feed');
+        const ws = new WebSocket('ws://localhost:8000/ws/video_feed/');
+
+
+        ws.onmessage = function(event) {
+            const arrayBuffer = event.data;
+            const blob = new Blob([new Uint8Array(arrayBuffer)], {type: 'image/jpeg'});
+            const imageUrl = URL.createObjectURL(imageBlob);
+            videoElement.src = imageUrl;
+        };
+
+        ws.onclose = function(event) {
+            console.log('WebSocket closed: ', event)
+        };
+    
+    </script>
+</body>
+</html>
+                                 

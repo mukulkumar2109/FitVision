@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <a href="live.html">Live</a>
+
+    <h1>Upload a Video</h1>
+
+    <div class="upload-container" onclick="document.getElementById('videoUpload').click();">
+        <p>Click to upload a video file</p>
+        <input type="file" id="videoUpload" accept="video/*" onchange="previewVideo(event)">
+    </div>
+
+    <video id="videoPreview" class="preview" controls></video>
+
+
+    <div>
+        <label for="exerciseInput">Exercise:</label>
+        <input type="text" id="exerciseInput" placeholder="e.g., bicep curls">
+    </div>
+    <div>
+        <label for="bodyPartInput">Body Part:</label>
+        <input type="text" id="bodyPartInput" placeholder="e.g., left arm">
+    </div>
+
+
+    <button class="button" onclick="uploadVideo()" disabled id="uploadButton">Upload Video</button>
+    <p id="results"></p>
+
+<script src="index.js"></script>
+</body>
+</html>
