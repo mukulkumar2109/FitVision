@@ -57,16 +57,17 @@ def process_video(request):
 
 @api_view(['POST'])
 def live_exercise(request):
+    return HttpResponse("hi")
 
-    global stop_flag
-    stop_flag = False
+    # global stop_flag
+    # stop_flag = False
 
-    exercise = request.data.get('exercise', 'bicep curls').lower()
-    body_part = request.data.get('body_part', 'right arm').lower()
+    # exercise = request.data.get('exercise', 'bicep curls').lower()
+    # body_part = request.data.get('body_part', 'right arm').lower()
 
-    result = poseDetector.process_video_frames(0, exercise, body_part, lambda: stop_flag)
+    # result = poseDetector.process_video_frames(0, exercise, body_part, lambda: stop_flag)
 
-    return Response({'result': result})
+    # return Response({'result': result})
 
 
 @api_view(['POST'])

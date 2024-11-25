@@ -91,6 +91,7 @@ class poseDetector:
                     else:
                         per = np.interp(angle, (50,150),(0,100))
 
+
                 elif exercise == "pushups" and body_part in ["right arm", "left arm"]:
                     angle = detector.findAngle(img, 12, 14, 16) if body_part == "right arm" else detector.findAngle(img, 11, 13, 15)
                     if angle > 180:
@@ -99,7 +100,7 @@ class poseDetector:
                         per = np.interp(angle, (65,155),(0,100))
 
                 elif exercise == "squats" and body_part in ["right leg", "left leg"]:
-                    angle = detector.findAngle(img, 24, 26, 28) if body_part == "right arm" else detector.findAngle(img, 23, 25, 27)
+                    angle = detector.findAngle(img, 24, 26, 28) if body_part == "right leg" else detector.findAngle(img, 23, 25, 27)
                     if angle > 180:
                         per = np.interp(angle, (195,290),(0,100))
                     else:
