@@ -17,19 +17,33 @@
 
     <video id="videoPreview" class="preview" controls></video>
 
-
+    <!-- Dropdown for exercise selection -->
     <div>
         <label for="exerciseInput">Exercise:</label>
-        <input type="text" id="exerciseInput" placeholder="e.g., bicep curls">
+        <select id="exerciseInput">
+            <option value="bicep curls" selected>Bicep Curls</option>
+            <option value="pushups">Pushups</option>
+            <option value="squats">Squats</option>
+            <option value="bench press">Bench Press</option>
+            <option value="dips">Dips</option>
+            <option value="crunches">Crunches</option>
+        </select>
     </div>
+
+    <!-- Dropdown for body part selection -->
     <div>
         <label for="bodyPartInput">Body Part:</label>
-        <input type="text" id="bodyPartInput" placeholder="e.g., left arm">
+        <select id="bodyPartInput">
+            <option value="right arm">Right Arm</option>
+            <option value="left arm" selected>Left Arm</option>
+            <option value="right leg">Right Leg</option>
+            <option value="left leg">Left Leg</option>
+        </select>
     </div>
 
-
     <button class="button" onclick="uploadVideo()" disabled id="uploadButton">Upload Video</button>
-    <p id="results"></p>
+    <pre id="results"></pre>
+
 
 <script src="index.js"></script>
 </body>

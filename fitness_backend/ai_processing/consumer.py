@@ -21,7 +21,9 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
         self.pTime = time.time()
         self.reps = 0
         self.time_taken = 0
+        self.bar = 0
         self.stream_task = None
+        self.a = 200
         logging.info("WebSocket connection accepted.")
 
     async def disconnect(self, close_code):
@@ -63,6 +65,8 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
                 }
                 await self.send(text_data=json.dumps(results))
                 logging.info("results sent")
+                if self.camera:
+                    self.camera.release()
 
     async def stream_video(self):
         while self.is_streaming:
@@ -70,7 +74,7 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
             if not ret:
                 logging.error("Failed to capture frame.")
                 break
-            
+            frame=cv2.resize(frame,(1500,920))
             processed_frame, self.reps, self.time_taken = self.process_frame(frame)
             logging.info(f"{self.reps}, {self.time_taken}")
             _, buffer = cv2.imencode('.jpg', processed_frame)
@@ -94,32 +98,62 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
         per=None
         if len(lmList) != 0:
             if self.exercise == "bicep curls" and self.body_part in ["right arm", "left arm"]:
-                angle = self.detector.findAngle(frame, 12, 14, 16) if self.body_part == "right arm" else self.detector.findAngle(frame, 11, 13, 15)
-                if angle > 180:
-                    per = np.interp(angle, (210, 310), (0, 100))
-                else:
-                    per = np.interp(angle, (60, 165), (100, 0))
+                # if (lmList[12][1]<0.5 or lmList[14][1]<0.5 or lmList[16][1] < 0.5):
+                #     print("boo")
+                # else:
+                    angle = self.detector.findAngle(frame, 12, 14, 16) if self.body_part == "right arm" else self.detector.findAngle(frame, 11, 13, 15)
+
+                    if angle > 180:
+                        per = np.interp(angle, (210, 310), (0, 100))
+                        bar = np.interp(angle, (210,310), (300,850))
+                    else:
+                        per = np.interp(angle, (60, 165), (100, 0))
+                        bar = np.interp(angle, (60,165), (300,850))
 
             elif self.exercise == "bench press" and self.body_part in ["right arm", "left arm"]:
                 angle = self.detector.findAngle(frame, 12, 14, 16) if self.body_part == "right arm" else self.detector.findAngle(frame, 11, 13, 15)
                 if angle > 160:
                     per = np.interp(angle, (185, 330), (0, 100))
+                    bar = np.interp(angle, (185,330), (650,100))
                 else:
                     per = np.interp(angle, (50, 150), (0, 100))
+                    bar = np.interp(angle, (50,150), (650,100))
 
             elif self.exercise == "pushups" and self.body_part in ["right arm", "left arm"]:
                 angle = self.detector.findAngle(frame, 12, 14, 16) if self.body_part == "right arm" else self.detector.findAngle(frame, 11, 13, 15)
                 if angle > 180:
                     per = np.interp(angle, (195, 285), (0, 100))
+                    bar = np.interp(angle, (195,285), (850,100))
                 else:
                     per = np.interp(angle, (65, 155), (0, 100))
+                    bar = np.interp(angle, (65,155), (850,100))
 
             elif self.exercise == "squats" and self.body_part in ["right leg", "left leg"]:
-                angle = self.detector.findAngle(frame, 24, 26, 28) if self.body_part == "right leg" else self.detector.findAngle(frame, 23, 25, 27)
+                if self.body_part == "right leg":
+                    angle = self.detector.findAngle(frame, 24, 26, 28) 
+                elif self.body_part == "left leg":
+                    self.detector.findAngle(frame, 23, 25, 27)
                 if angle > 180:
                     per = np.interp(angle, (195, 290), (0, 100))
+                    bar = np.interp(angle, (195,290), (650,100))
                 else:
                     per = np.interp(angle, (60, 160), (100, 0))
+                    bar = np.interp(angle, (60,160), (100,650))
+
+            elif self.exercise == "dips" and self.body_part in ["right arm", "left arm"]:
+                if self.body_part == "right arm":
+                    angle = self.detector.findAngle(frame, 12, 14, 16) 
+                    per = np.interp(angle, (85,170), (100, 0))
+                    bar = np.interp(angle, (85,170), (100,650))
+                else:
+                    self.detector.findAngle(frame, 11, 13, 15)
+                    per = np.interp(angle, (190,250),(0,100))
+                    bar = np.interp(angle, (190,250), (650,100))
+
+            elif self.exercise=="crunches":
+                angle = self.detector.findAngle(frame,12,24,26)
+                per = np.interp(angle, (108,120),(0,100))
+                bar = np.interp(angle, (108,120), (650,100))
 
             color = (0, 0, 255)
             if per == 100:
@@ -131,8 +165,23 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
                 if self.dir == 1:
                     self.count += 0.5
                     self.dir = 0
+        if(self.count>9.5):
+            self.a=300
+        cv2.rectangle(frame,(1350,300),(1425,850),(255,255,255),3)
+        cv2.rectangle(frame,(1350,int(bar)),(1425,850),color,cv2.FILLED)
+        cv2.putText(frame, f'{int(per)}%', (1350,275), cv2.FONT_HERSHEY_PLAIN, 4, (255,0,0), 4)
 
+        cv2.rectangle(frame,(0,700),(self.a,920),(0,255,0),cv2.FILLED)
+        cv2.putText(frame, str(int(self.count)), (45,870), cv2.FONT_HERSHEY_PLAIN, 10, (0,0,255), 15)
+        
         cTime = time.time()
+        
+        cv2.putText(frame,f'Time: {int(cTime-self.pTime)}s', (60,140), cv2.FONT_HERSHEY_DUPLEX, 1, (255,255,255), 2)
+
+        fps = 1/(cTime-self.pTime)
+        pTime=cTime
+        cv2.putText(frame, "fps: "+ str(int(fps)), (55,90), cv2.FONT_HERSHEY_PLAIN, 3, (250,0,0), 2)
+        cv2.putText(frame, str(int(angle)), (0,360), cv2.FONT_HERSHEY_PLAIN, 4, (0,0,255), 4)
         
         return frame, int(self.count), int(cTime - self.pTime)
 

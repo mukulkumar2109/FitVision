@@ -28,7 +28,6 @@ async function uploadVideo() {
     const formData = new FormData();
     formData.append('video', selectedFile);
 
-   
     const exerciseInput = document.getElementById('exerciseInput');
     const bodyPartInput = document.getElementById('bodyPartInput');
     const exercise = exerciseInput.value.trim() || 'bicep curls';
@@ -38,7 +37,6 @@ async function uploadVideo() {
     formData.append('body_part', bodyPart);
 
     try {
-        
         const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]')?.value;
 
         const response = await fetch('http://127.0.0.1:8000/', {
@@ -51,7 +49,16 @@ async function uploadVideo() {
 
         if (response.ok) {
             const data = await response.json();
-            results.textContent = `Results from video: ${JSON.stringify(data, null, 2)}`;
+            console.log(data);
+
+            // Assuming the response contains 'reps' in the data object, display only that.
+            
+            const reps = data.result ? data.result.reps : 'Reps not available';
+
+            // Display only the reps value in the pre tag
+            results.textContent = `Reps: ${reps}`;
+            
+
             alert('Video uploaded successfully!');
         } else {
             const errorText = await response.text();

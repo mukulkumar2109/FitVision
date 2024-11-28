@@ -1,0 +1,124 @@
+/* General styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+    color: #333;
+    text-align: center;
+}
+
+/* Header */
+h1 {
+    margin: 20px 0;
+    color: #4CAF50;
+}
+
+/* Video Stream */
+#video {
+    display: block;
+    margin: auto auto;
+    border: 5px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Input form */
+div {
+    margin: 20px auto;
+    padding: 10px;
+    width: 80%;
+    max-width: 500px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+label {
+    display: block;
+    font-size: 14px;
+    margin: 10px 0 5px;
+    text-align: left;
+}
+
+input[type="text"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+/* Buttons */
+button {
+    padding: 10px 15px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#startButton {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#stopButton {
+    background-color: #f44336;
+    color: white;
+}
+
+button:hover {
+    background-color: #3e8e41;
+}
+
+#stopButton:hover {
+    background-color: #d32f2f;
+}
+
+/* Result Display */
+#result {
+    background-color: #f9f9f9;
+    color: #333;
+    text-align: left;
+    width: calc(100% - 40px);
+    max-width: 600px;
+    margin: 20px auto;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#result h2 {
+    color: #4CAF50;
+    margin: 10px;
+}
+
+#resultContent {
+    margin: 10px;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    white-space: pre-wrap;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #video {
+        width: 100%;
+        height: auto;
+    }
+
+    div {
+        width: 90%;
+    }
+
+    #result {
+        width: 90%;
+    }
+}
