@@ -21,9 +21,17 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
         self.pTime = time.time()
         self.reps = 0
         self.time_taken = 0
-        self.bar = 0
         self.stream_task = None
         self.a = 200
+        self.prev = [0,0]
+        self.prev2 = [0,0]
+        self.wrist_coords = []
+        self.shoulder_coords = []
+        self.shoulder_movement = 0
+        self.wrist_movement = 300
+        self.flag = 0
+        self.per=0
+        self.bar = 0
         logging.info("WebSocket connection accepted.")
 
     async def disconnect(self, close_code):
@@ -76,7 +84,7 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
                 break
             frame=cv2.resize(frame,(1500,920))
             processed_frame, self.reps, self.time_taken = self.process_frame(frame)
-            logging.info(f"{self.reps}, {self.time_taken}")
+            # logging.info(f"{self.reps}, {self.time_taken}")
             _, buffer = cv2.imencode('.jpg', processed_frame)
             frame_data = buffer.tobytes()
 
@@ -95,38 +103,58 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
         """
         frame = self.detector.findPose(frame, draw=False)
         lmList = self.detector.findPosition(frame, draw=False)
-        per=None
         if len(lmList) != 0:
             if self.exercise == "bicep curls" and self.body_part in ["right arm", "left arm"]:
                 # if (lmList[12][1]<0.5 or lmList[14][1]<0.5 or lmList[16][1] < 0.5):
                 #     print("boo")
                 # else:
                     angle = self.detector.findAngle(frame, 12, 14, 16) if self.body_part == "right arm" else self.detector.findAngle(frame, 11, 13, 15)
+                    shoulder_landmark = 11 if self.body_part == "left arm" else 12
+                    wrist_landmark = 15 if self.body_part == "left arm" else 16
 
-                    if angle > 180:
-                        per = np.interp(angle, (210, 310), (0, 100))
-                        bar = np.interp(angle, (210,310), (300,850))
+
+                    self.shoulder_coords = [lmList[shoulder_landmark][2], lmList[shoulder_landmark][3]]
+                    # print(f"{lmList[shoulder_landmark][2]} {lmList[shoulder_landmark][3]}")
+                    self.wrist_coords = [lmList[wrist_landmark][2], lmList[wrist_landmark][3]]
+                    
+                    # shoulder_coords = self.detector.findPosition(frame, shoulder_landmark)
+                    # wrist_coords = self.detector.findPosition(frame, wrist_landmark)
+                    # print(shoulder_coords)
+                    self.shoulder_movement = max(abs(self.shoulder_coords[1] - self.prev[1]), abs(self.shoulder_coords[0] - self.prev[0])) 
+                    
+                    
+                    shoulder_movement_threshold = 10
+                    wrist_movement_threshold = 300
+                    
+                    self.prev = self.shoulder_coords
+                    if(self.shoulder_movement>shoulder_movement_threshold or self.wrist_movement<wrist_movement_threshold):
+                        print(f"You are not preforming {self.exercise}. Should we move to a different exercise?")
                     else:
-                        per = np.interp(angle, (60, 165), (100, 0))
-                        bar = np.interp(angle, (60,165), (300,850))
+                        if angle > 180:
+                            self.per = np.interp(angle, (210, 310), (0, 100))
+                            self.bar = np.interp(angle, (210,310), (850,300))
+                        else:
+                            self.per = np.interp(angle, (60, 165), (100, 0))
+                            self.bar = np.interp(angle, (60,165), (300,850))
+                    
 
             elif self.exercise == "bench press" and self.body_part in ["right arm", "left arm"]:
                 angle = self.detector.findAngle(frame, 12, 14, 16) if self.body_part == "right arm" else self.detector.findAngle(frame, 11, 13, 15)
                 if angle > 160:
-                    per = np.interp(angle, (185, 330), (0, 100))
-                    bar = np.interp(angle, (185,330), (650,100))
+                    self.per = np.interp(angle, (185, 330), (0, 100))
+                    self.bar = np.interp(angle, (185,330), (650,100))
                 else:
-                    per = np.interp(angle, (50, 150), (0, 100))
-                    bar = np.interp(angle, (50,150), (650,100))
+                    self.per = np.interp(angle, (50, 150), (0, 100))
+                    self.bar = np.interp(angle, (50,150), (650,100))
 
             elif self.exercise == "pushups" and self.body_part in ["right arm", "left arm"]:
                 angle = self.detector.findAngle(frame, 12, 14, 16) if self.body_part == "right arm" else self.detector.findAngle(frame, 11, 13, 15)
                 if angle > 180:
-                    per = np.interp(angle, (195, 285), (0, 100))
-                    bar = np.interp(angle, (195,285), (850,100))
+                    self.per = np.interp(angle, (195, 285), (0, 100))
+                    self.bar = np.interp(angle, (195,285), (850,100))
                 else:
-                    per = np.interp(angle, (65, 155), (0, 100))
-                    bar = np.interp(angle, (65,155), (850,100))
+                    self.per = np.interp(angle, (65, 155), (0, 100))
+                    self.bar = np.interp(angle, (65,155), (850,100))
 
             elif self.exercise == "squats" and self.body_part in ["right leg", "left leg"]:
                 if self.body_part == "right leg":
@@ -134,42 +162,54 @@ class VideoStreamConsumer(AsyncWebsocketConsumer):
                 elif self.body_part == "left leg":
                     self.detector.findAngle(frame, 23, 25, 27)
                 if angle > 180:
-                    per = np.interp(angle, (195, 290), (0, 100))
-                    bar = np.interp(angle, (195,290), (650,100))
+                    self.per = np.interp(angle, (195, 290), (0, 100))
+                    self.bar = np.interp(angle, (195,290), (650,100))
                 else:
-                    per = np.interp(angle, (60, 160), (100, 0))
-                    bar = np.interp(angle, (60,160), (100,650))
+                    self.per = np.interp(angle, (60, 160), (100, 0))
+                    self.bar = np.interp(angle, (60,160), (100,650))
 
             elif self.exercise == "dips" and self.body_part in ["right arm", "left arm"]:
                 if self.body_part == "right arm":
                     angle = self.detector.findAngle(frame, 12, 14, 16) 
-                    per = np.interp(angle, (85,170), (100, 0))
-                    bar = np.interp(angle, (85,170), (100,650))
+                    self.per = np.interp(angle, (85,170), (100, 0))
+                    self.bar = np.interp(angle, (85,170), (100,650))
                 else:
                     self.detector.findAngle(frame, 11, 13, 15)
-                    per = np.interp(angle, (190,250),(0,100))
-                    bar = np.interp(angle, (190,250), (650,100))
+                    self.per = np.interp(angle, (190,250),(0,100))
+                    self.bar = np.interp(angle, (190,250), (650,100))
 
             elif self.exercise=="crunches":
                 angle = self.detector.findAngle(frame,12,24,26)
-                per = np.interp(angle, (108,120),(0,100))
-                bar = np.interp(angle, (108,120), (650,100))
+                self.per = np.interp(angle, (108,120),(0,100))
+                self.bar = np.interp(angle, (108,120), (650,100))
 
             color = (0, 0, 255)
-            if per == 100:
+            if self.per == 100:
                 color = (0, 255, 0)
                 if self.dir == 0:
                     self.count += 0.5
                     self.dir = 1
-            if per == 0:
+                    if(self.flag == 1):
+                        self.wrist_movement = max(abs(self.wrist_coords[-1] - self.prev2[1]), abs(self.wrist_coords[-2] - self.prev2[0])) 
+                        self.prev2[0]=self.wrist_coords[-2]
+                        self.prev2[1]=self.wrist_coords[-1]
+                        print(self.wrist_movement)
+                        self.flag = 0
+            if self.per == 0:
                 if self.dir == 1:
                     self.count += 0.5
                     self.dir = 0
+                    if(self.flag==0):
+                        self.wrist_movement = max(abs(self.wrist_coords[1] - self.prev2[1]), abs(self.wrist_coords[0] - self.prev2[0])) 
+                        self.prev2[0]=self.wrist_coords[-2]
+                        self.prev2[1]=self.wrist_coords[-1]
+                        print(self.wrist_movement)
+                        self.flag = 1
         if(self.count>9.5):
             self.a=300
         cv2.rectangle(frame,(1350,300),(1425,850),(255,255,255),3)
-        cv2.rectangle(frame,(1350,int(bar)),(1425,850),color,cv2.FILLED)
-        cv2.putText(frame, f'{int(per)}%', (1350,275), cv2.FONT_HERSHEY_PLAIN, 4, (255,0,0), 4)
+        cv2.rectangle(frame,(1350,int(self.bar)),(1425,850),color,cv2.FILLED)
+        cv2.putText(frame, f'{int(self.per)}%', (1350,275), cv2.FONT_HERSHEY_PLAIN, 4, (255,0,0), 4)
 
         cv2.rectangle(frame,(0,700),(self.a,920),(0,255,0),cv2.FILLED)
         cv2.putText(frame, str(int(self.count)), (45,870), cv2.FONT_HERSHEY_PLAIN, 10, (0,0,255), 15)

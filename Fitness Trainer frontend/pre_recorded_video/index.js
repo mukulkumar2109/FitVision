@@ -1,5 +1,6 @@
 let selectedFile = null;
 const results = document.getElementById('results');
+const messageBox = document.getElementById('messageBox');
 
 function previewVideo(event) {
     const file = event.target.files[0];
@@ -49,16 +50,17 @@ async function uploadVideo() {
 
         if (response.ok) {
             const data = await response.json();
-            console.log(data);
+            // console.log(data);
 
-            // Assuming the response contains 'reps' in the data object, display only that.
-            
             const reps = data.result ? data.result.reps : 'Reps not available';
-
-            // Display only the reps value in the pre tag
+            const message = "bob";
+            console.log(message)
+            messageBox.textContent = "ucy";
+            // Display the reps
             results.textContent = `Reps: ${reps}`;
-            
-
+        
+        
+        
             alert('Video uploaded successfully!');
         } else {
             const errorText = await response.text();
@@ -69,4 +71,4 @@ async function uploadVideo() {
         console.error('Error uploading video:', error);
         results.textContent = `Error: ${error.message}`;
     }
-}
+};
