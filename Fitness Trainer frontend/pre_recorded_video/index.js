@@ -1,3 +1,5 @@
+console.log("akada cajaadj daa");
+
 let selectedFile = null;
 const results = document.getElementById('results');
 const messageBox = document.getElementById('messageBox');
@@ -6,6 +8,7 @@ function previewVideo(event) {
     const file = event.target.files[0];
     const videoPreview = document.getElementById('videoPreview');
     const uploadButton = document.getElementById('uploadButton');
+
 
     if (file && file.type.startsWith('video/')) {
         selectedFile = file;
@@ -48,13 +51,16 @@ async function uploadVideo() {
             body: formData,
         });
 
+        console.log(response);
+
         if (response.ok) {
+            console.log("response is okay");
             const data = await response.json();
-            // console.log(data);
+            console.log(data);
 
             const reps = data.result ? data.result.reps : 'Reps not available';
             const message = "bob";
-            console.log(message)
+            console.log(message);
             messageBox.textContent = "ucy";
             // Display the reps
             results.textContent = `Reps: ${reps}`;
@@ -63,6 +69,7 @@ async function uploadVideo() {
         
             alert('Video uploaded successfully!');
         } else {
+            console.log("error knaaa");
             const errorText = await response.text();
             results.textContent = `Error: ${errorText}`;
             console.error('Error:', errorText);
