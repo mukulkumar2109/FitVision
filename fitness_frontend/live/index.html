@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<link rel="stylesheet" href="index.css">
+<body>
+    <h1>Live Video Feed</h1>
+    <img id="video" alt="Video Stream" style="display:none" />
+
+    <div>
+        <label for="exercise">Exercise:</label>
+        <select id="exercise">
+            <option value="bicep curls" selected>Bicep Curls</option>
+            <option value="pushups">Pushups</option>
+            <option value="squats">Squats</option>
+            <option value="bench press">Bench Press</option>
+            <option value="dips">Dips</option>
+            <option value="crunches">Crunches</option>
+        </select>
+        
+        <label for="bodyPart">Body Part:</label>
+        <select id="bodyPart">
+            <option value="left arm" selected>Left Arm</option>
+            <option value="right arm">Right Arm</option>
+            <option value="left leg">Left Leg</option>
+            <option value="right leg">Right Leg</option>
+        </select>
+        
+        <button id="startButton">Start</button>
+        <button id="stopButton" style="display: none;">Stop</button>
+    </div>
+
+    <div id="result" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; display: none;">
+        <h2>Results</h2>
+        <pre id="resultContent" style="white-space: pre-wrap;"></pre>
+    </div>
+</body>
+<script src="index.js"></script>
+</html>

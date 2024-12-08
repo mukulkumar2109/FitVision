@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pre-Recorded</title>
+</head>
+<link rel="stylesheet" href="index.css">
+<body >
+    
+    <h1>Upload Video Here</h1>
+
+    <div class="upload-container" onclick="document.getElementById('videoUpload').click();">
+        <p>Click to upload a video file</p>
+        <input type="file" id="videoUpload" accept="video/*" onchange="previewVideo(event)">
+    </div>
+
+    <video id="videoPreview" class="preview" controls></video>
+
+    <div class="selector">
+
+        <!-- Dropdown for exercise selection -->
+        <div class="exercise">
+            <label for="exerciseInput">Exercise:</label>
+            <select id="exerciseInput">
+                <option value="bicep curls" selected>Bicep Curls</option>
+                <option value="pushups">Pushups</option>
+                <option value="squats">Squats</option>
+                <option value="bench press">Bench Press</option>
+                <option value="dips">Dips</option>
+                <option value="crunches">Crunches</option>
+            </select>
+        </div>
+    
+        <!-- Dropdown for body part selection -->
+        <div class="bodyPart">
+            <label for="bodyPartInput">Body Part:</label>
+            <select id="bodyPartInput">
+                <option value="right arm">Right Arm</option>
+                <option value="left arm" selected>Left Arm</option>
+                <option value="right leg">Right Leg</option>
+                <option value="left leg">Left Leg</option>
+            </select>
+        </div>
+    </div>
+
+
+    <button class="button" onclick="uploadVideo()" disabled id="uploadButton">Upload Video</button>
+    <!-- <pre id="results"></pre> -->
+    <pre id="messageBox" style="display: none;"></pre>
+    <div id="result" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; display: none;">
+        <h2>Results</h2>
+        <pre id="resultContent" style="white-space: pre-wrap;"></pre>
+    </div>
+</body>
+<script src="index.js"></script>
+</html>

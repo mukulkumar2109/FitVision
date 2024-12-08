@@ -1,0 +1,58 @@
+a{
+    width: 300%;
+    max-width: 500px;
+    min-width: 100px;
+    text-decoration: none;
+    color: white;
+    background-color: rgb(106, 10, 123);
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin: 5px;
+    display: inline-block;
+}
+
+a:hover {
+    background-color: rgb(73, 5, 85);
+}
+
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: rgb(22, 19, 31);
+    margin: 0;
+    padding: 0;
+    
+}
+
+
+img{
+    height: 60vh;
+    width: 50%;
+    max-width: 800px;
+    max-height: 500px;
+    border-radius: 15px;
+}
+
+.header {
+    background-color: rgb(106, 10, 123);
+    color: white;
+    padding: 20px;
+}
+.header h1 {
+    margin: 0;
+}
+.cart{
+    padding-left: 10%;
+    padding-right: 10%;
+    display: flex;
+    align-items: center;
+    margin-top: 10vh;
+    gap: 10%;
+}
+
+.content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+}
